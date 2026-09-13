@@ -146,10 +146,304 @@
       color:var(--accent);
       font-weight:800;
     }
+    .card-head{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:12px;
+    }
+    .status-pill{
+      flex:0 0 auto;
+      display:inline-block;
+      padding:4px 10px;
+      border-radius:999px;
+      font-size:.75rem;
+      font-weight:800;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+      border:1px solid var(--border);
+      background:var(--panel);
+      color:var(--muted);
+    }
+    .status-pill[data-status="idle"]{
+      color:var(--muted);
+    }
+    .status-pill[data-status="running"]{
+      color:#bae6fd;
+      background:rgba(56,189,248,.12);
+      border-color:rgba(56,189,248,.35);
+    }
+    .status-pill[data-status="done"]{
+      color:#bbf7d0;
+      background:rgba(34,197,94,.12);
+      border-color:rgba(34,197,94,.35);
+    }
+    .check-list{
+      list-style:none;
+      padding-left:0;
+      margin:10px 0 0;
+    }
+    .check-list li{
+      margin:8px 0;
+    }
+    .check-list li::before{
+      content:none;
+    }
+    .check-list label{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      cursor:pointer;
+    }
+    .check-list input[type="checkbox"]{
+      margin-top:4px;
+      accent-color:var(--accent);
+      width:16px;
+      height:16px;
+      flex:0 0 auto;
+    }
+    .job-fields{
+      margin-top:14px;
+      display:grid;
+      gap:10px;
+    }
+    .field{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      color:var(--muted);
+      font-size:.86rem;
+      font-weight:700;
+    }
+    .field input,
+    .field textarea{
+      font:inherit;
+      font-weight:500;
+      color:var(--text);
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:12px;
+      padding:10px 12px;
+      width:100%;
+    }
+    .field textarea{
+      min-height:72px;
+      resize:vertical;
+    }
+    .field input:disabled,
+    .field textarea:disabled,
+    .check-list input:disabled{
+      opacity:.7;
+      cursor:default;
+    }
+    .metrics-row{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+      gap:10px;
+    }
+    .job-actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:14px;
+    }
+    .btn{
+      font:inherit;
+      font-weight:700;
+      border-radius:999px;
+      padding:8px 14px;
+      cursor:pointer;
+      border:1px solid var(--border);
+      background:var(--panel);
+      color:var(--text);
+    }
+    .btn:hover{
+      border-color:var(--accent);
+    }
+    .btn-start{
+      background:rgba(56,189,248,.12);
+      border-color:rgba(56,189,248,.35);
+      color:#bae6fd;
+    }
+    .btn-complete{
+      background:rgba(34,197,94,.12);
+      border-color:rgba(34,197,94,.35);
+      color:#bbf7d0;
+    }
+    .btn-reopen{
+      background:rgba(245,158,11,.1);
+      border-color:rgba(245,158,11,.35);
+      color:#fde68a;
+    }
+    .btn[hidden]{
+      display:none !important;
+    }
+    .live-metric strong{
+      color:var(--accent);
+    }
+    .rollup{
+      margin-top:14px;
+      padding:12px;
+      border:1px solid var(--border);
+      border-radius:12px;
+      background:rgba(15,23,42,.55);
+    }
+    .rollup h3{
+      margin:0 0 8px;
+      font-size:.92rem;
+      color:var(--muted);
+      text-transform:uppercase;
+      letter-spacing:.06em;
+    }
+    .rollup ul{
+      margin:0;
+      padding-left:0;
+      list-style:none;
+    }
+    .rollup li{
+      display:flex;
+      justify-content:space-between;
+      gap:8px;
+      margin:6px 0;
+      font-size:.92rem;
+    }
+    .rollup .is-done{
+      color:var(--accent2);
+      font-weight:800;
+    }
+    .rollup .is-pending{
+      color:var(--muted);
+    }
+    .reports{
+      margin-top:24px;
+      background:rgba(23,32,51,.9);
+      border:1px solid var(--border);
+      border-radius:18px;
+      padding:22px;
+    }
+    .reports-head{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+    .reports-list,
+    .history-list{
+      display:grid;
+      gap:12px;
+      margin-top:14px;
+    }
+    .report-card{
+      padding:16px;
+      border-radius:14px;
+      background:rgba(15,23,42,.75);
+      border:1px solid var(--border);
+    }
+    .report-card h3{
+      margin:0 0 4px;
+      font-size:1.05rem;
+    }
+    .report-meta{
+      color:var(--muted);
+      font-size:.88rem;
+    }
+    .report-notes,
+    .report-metrics{
+      margin:8px 0 0;
+      font-size:.95rem;
+    }
+    .empty-note{
+      color:var(--muted);
+      margin:12px 0 0;
+    }
+    .history-block[hidden]{
+      display:none !important;
+    }
+    .history-block{
+      margin-top:18px;
+      padding-top:16px;
+      border-top:1px solid var(--border);
+    }
+    .history-date{
+      margin:16px 0 8px;
+      color:var(--accent);
+      font-size:.88rem;
+      font-weight:800;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+    }
+    .footer-actions{
+      margin-top:16px;
+      display:flex;
+      justify-content:center;
+      flex-wrap:wrap;
+      gap:10px;
+    }
+    .footer-tip{
+      margin-top:10px;
+    }
+    .toast{
+      position:fixed;
+      right:16px;
+      bottom:16px;
+      max-width:360px;
+      padding:12px 16px;
+      border-radius:12px;
+      background:var(--panel);
+      border:1px solid var(--border);
+      color:var(--text);
+      box-shadow:0 12px 30px rgba(0,0,0,.3);
+      z-index:40;
+    }
+    .toast[hidden]{
+      display:none !important;
+    }
+    .toast.warn{
+      border-color:var(--warn);
+    }
+    .dialog-backdrop{
+      position:fixed;
+      inset:0;
+      background:rgba(2,6,23,.62);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+      z-index:50;
+    }
+    .dialog-backdrop[hidden]{
+      display:none !important;
+    }
+    .dialog{
+      width:min(440px,100%);
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:18px;
+      padding:22px;
+    }
+    .dialog p{
+      color:var(--muted);
+      margin:8px 0 16px;
+    }
+    .dialog-actions{
+      display:flex;
+      justify-content:flex-end;
+      gap:8px;
+    }
     @media print{
       body{background:white;color:#111827}
-      .card,.metrics,header{box-shadow:none;background:white}
-      .subtitle,.footer,.metric span{color:#4b5563}
+      .card,.metrics,header,.reports{box-shadow:none;background:white}
+      .subtitle,.footer,.metric span,.report-meta{color:#4b5563}
+      .no-print,
+      .job-actions,
+      .footer-actions,
+      .toast,
+      .dialog-backdrop,
+      .status-pill,
+      .btn{
+        display:none !important;
+      }
     }
   </style>
 </head>
@@ -160,66 +454,151 @@
       <p class="subtitle">A focused weekday system for getting hired as quickly as possible without turning the search into an all-day browser swamp.</p>
       <div class="goal">Core target: 3 strong applications before lunch</div>
     </header>
-    <section class="grid">
-      <article class="card">
-        <div class="time">Morning · 60–90 min</div>
+    <section class="grid" id="job-grid">
+      <article class="card" data-job-id="scan">
+        <div class="card-head">
+          <div class="time">Morning · 60–90 min</div>
+          <span class="status-pill" data-status="idle">Idle</span>
+        </div>
         <h2>1. Fresh Job Scan + Applications</h2>
-        <ul>
-          <li>Search newly posted IT roles first.</li>
-          <li>Target Help Desk, Desktop Support, IT Support Specialist, Computer Specialist, Junior Sysadmin, NOC Analyst, Network Technician, and Technical Support.</li>
-          <li>Apply when you match roughly 60%+ of the requirements.</li>
-          <li>Tailor keywords only when it clearly improves the match.</li>
+        <ul class="check-list">
+          <li><label><input type="checkbox" data-check="0"> <span>Search newly posted IT roles first.</span></label></li>
+          <li><label><input type="checkbox" data-check="1"> <span>Target Help Desk, Desktop Support, IT Support Specialist, Computer Specialist, Junior Sysadmin, NOC Analyst, Network Technician, and Technical Support.</span></label></li>
+          <li><label><input type="checkbox" data-check="2"> <span>Apply when you match roughly 60%+ of the requirements.</span></label></li>
+          <li><label><input type="checkbox" data-check="3"> <span>Tailor keywords only when it clearly improves the match.</span></label></li>
         </ul>
+        <div class="job-fields">
+          <div class="metrics-row">
+            <label class="field">Applications <input type="number" min="0" step="1" data-metric="applications" value="0"></label>
+          </div>
+          <label class="field">Notes <textarea data-notes rows="3" placeholder="What did you apply to?"></textarea></label>
+        </div>
+        <div class="job-actions no-print">
+          <button type="button" class="btn btn-start" data-action="start">Start</button>
+          <button type="button" class="btn btn-complete" data-action="complete" hidden>Complete</button>
+          <button type="button" class="btn btn-reopen" data-action="reopen" hidden>Reopen</button>
+        </div>
       </article>
-      <article class="card">
-        <div class="time">Late Morning · 30–45 min</div>
+      <article class="card" data-job-id="followup">
+        <div class="card-head">
+          <div class="time">Late Morning · 30–45 min</div>
+          <span class="status-pill" data-status="idle">Idle</span>
+        </div>
         <h2>2. Follow-Up + Networking</h2>
-        <ul>
-          <li>Check Indeed, email, and LinkedIn messages.</li>
-          <li>Follow up on strong applications from the previous week.</li>
-          <li>Connect with local IT staff, recruiters, MSP employees, and hiring managers.</li>
-          <li>Keep outreach short, professional, and specific.</li>
+        <ul class="check-list">
+          <li><label><input type="checkbox" data-check="0"> <span>Check Indeed, email, and LinkedIn messages.</span></label></li>
+          <li><label><input type="checkbox" data-check="1"> <span>Follow up on strong applications from the previous week.</span></label></li>
+          <li><label><input type="checkbox" data-check="2"> <span>Connect with local IT staff, recruiters, MSP employees, and hiring managers.</span></label></li>
+          <li><label><input type="checkbox" data-check="3"> <span>Keep outreach short, professional, and specific.</span></label></li>
         </ul>
+        <div class="job-fields">
+          <div class="metrics-row">
+            <label class="field">Follow-ups <input type="number" min="0" step="1" data-metric="followUps" value="0"></label>
+            <label class="field">Connections <input type="number" min="0" step="1" data-metric="connections" value="0"></label>
+          </div>
+          <label class="field">Notes <textarea data-notes rows="3" placeholder="Who did you follow up with?"></textarea></label>
+        </div>
+        <div class="job-actions no-print">
+          <button type="button" class="btn btn-start" data-action="start">Start</button>
+          <button type="button" class="btn btn-complete" data-action="complete" hidden>Complete</button>
+          <button type="button" class="btn btn-reopen" data-action="reopen" hidden>Reopen</button>
+        </div>
       </article>
-      <article class="card">
-        <div class="time">Early Afternoon · 1–2 hrs</div>
+      <article class="card" data-job-id="proof">
+        <div class="card-head">
+          <div class="time">Early Afternoon · 1–2 hrs</div>
+          <span class="status-pill" data-status="idle">Idle</span>
+        </div>
         <h2>3. Build Visible Proof</h2>
-        <ul>
-          <li>Improve one GitHub project or README.</li>
-          <li>Add screenshots, network diagrams, or project documentation.</li>
-          <li>Update jamielab.me with one concrete improvement.</li>
-          <li>Document a real troubleshooting, Linux, networking, Docker, backup, or security task.</li>
+        <ul class="check-list">
+          <li><label><input type="checkbox" data-check="0"> <span>Improve one GitHub project or README.</span></label></li>
+          <li><label><input type="checkbox" data-check="1"> <span>Add screenshots, network diagrams, or project documentation.</span></label></li>
+          <li><label><input type="checkbox" data-check="2"> <span>Update jamielab.me with one concrete improvement.</span></label></li>
+          <li><label><input type="checkbox" data-check="3"> <span>Document a real troubleshooting, Linux, networking, Docker, backup, or security task.</span></label></li>
         </ul>
+        <div class="job-fields">
+          <label class="field">What improved <input type="text" data-metric="whatImproved" placeholder="Project, README, or write-up"></label>
+          <label class="field">Notes <textarea data-notes rows="3" placeholder="What is now visible that was not this morning?"></textarea></label>
+        </div>
+        <div class="job-actions no-print">
+          <button type="button" class="btn btn-start" data-action="start">Start</button>
+          <button type="button" class="btn btn-complete" data-action="complete" hidden>Complete</button>
+          <button type="button" class="btn btn-reopen" data-action="reopen" hidden>Reopen</button>
+        </div>
       </article>
-      <article class="card">
-        <div class="time">Mid-Afternoon · ~60 min</div>
+      <article class="card" data-job-id="practice">
+        <div class="card-head">
+          <div class="time">Mid-Afternoon · ~60 min</div>
+          <span class="status-pill" data-status="idle">Idle</span>
+        </div>
         <h2>4. Interview + Certification Practice</h2>
-        <ul>
-          <li>Study one practical IT topic.</li>
-          <li>Practice troubleshooting questions out loud.</li>
-          <li>Use home-lab stories as interview examples.</li>
-          <li>Keep certification study supportive, not dominant.</li>
+        <ul class="check-list">
+          <li><label><input type="checkbox" data-check="0"> <span>Study one practical IT topic.</span></label></li>
+          <li><label><input type="checkbox" data-check="1"> <span>Practice troubleshooting questions out loud.</span></label></li>
+          <li><label><input type="checkbox" data-check="2"> <span>Use home-lab stories as interview examples.</span></label></li>
+          <li><label><input type="checkbox" data-check="3"> <span>Keep certification study supportive, not dominant.</span></label></li>
         </ul>
+        <div class="job-fields">
+          <div class="metrics-row">
+            <label class="field">Topic <input type="text" data-metric="topic" placeholder="e.g. DNS, RAID, Active Directory"></label>
+            <label class="field">Minutes <input type="number" min="0" step="1" data-metric="minutes" value="0"></label>
+          </div>
+          <label class="field">Notes <textarea data-notes rows="3" placeholder="What example stories did you rehearse?"></textarea></label>
+        </div>
+        <div class="job-actions no-print">
+          <button type="button" class="btn btn-start" data-action="start">Start</button>
+          <button type="button" class="btn btn-complete" data-action="complete" hidden>Complete</button>
+          <button type="button" class="btn btn-reopen" data-action="reopen" hidden>Reopen</button>
+        </div>
       </article>
-      <article class="card">
-        <div class="time">Late Afternoon · 30–60 min</div>
+      <article class="card" data-job-id="sweep">
+        <div class="card-head">
+          <div class="time">Late Afternoon · 30–60 min</div>
+          <span class="status-pill" data-status="idle">Idle</span>
+        </div>
         <h2>5. Second Job Sweep</h2>
-        <ul>
-          <li>Check for newly posted roles from later in the day.</li>
-          <li>Submit any high-fit applications you missed earlier.</li>
-          <li>Update your application tracker before stopping.</li>
+        <ul class="check-list">
+          <li><label><input type="checkbox" data-check="0"> <span>Check for newly posted roles from later in the day.</span></label></li>
+          <li><label><input type="checkbox" data-check="1"> <span>Submit any high-fit applications you missed earlier.</span></label></li>
+          <li><label><input type="checkbox" data-check="2"> <span>Update your application tracker before stopping.</span></label></li>
         </ul>
+        <div class="job-fields">
+          <div class="metrics-row">
+            <label class="field">Applications <input type="number" min="0" step="1" data-metric="applications" value="0"></label>
+          </div>
+          <label class="field">Notes <textarea data-notes rows="3" placeholder="Any late-day roles worth a second look?"></textarea></label>
+        </div>
+        <div class="job-actions no-print">
+          <button type="button" class="btn btn-start" data-action="start">Start</button>
+          <button type="button" class="btn btn-complete" data-action="complete" hidden>Complete</button>
+          <button type="button" class="btn btn-reopen" data-action="reopen" hidden>Reopen</button>
+        </div>
       </article>
-      <article class="card">
-        <div class="time">End of Day · 10 min</div>
+      <article class="card" data-job-id="close">
+        <div class="card-head">
+          <div class="time">End of Day · 10 min</div>
+          <span class="status-pill" data-status="idle">Idle</span>
+        </div>
         <h2>6. Close the Loop</h2>
-        <ul class="check">
-          <li>Applications logged</li>
-          <li>Follow-ups scheduled</li>
-          <li>One portfolio/project improvement completed</li>
-          <li>One interview topic practiced</li>
-          <li>Tomorrow's first task identified</li>
+        <ul class="check-list">
+          <li><label><input type="checkbox" data-check="0"> <span>Applications logged</span></label></li>
+          <li><label><input type="checkbox" data-check="1"> <span>Follow-ups scheduled</span></label></li>
+          <li><label><input type="checkbox" data-check="2"> <span>One portfolio/project improvement completed</span></label></li>
+          <li><label><input type="checkbox" data-check="3"> <span>One interview topic practiced</span></label></li>
+          <li><label><input type="checkbox" data-check="4"> <span>Tomorrow's first task identified</span></label></li>
         </ul>
+        <div class="rollup" id="close-rollup">
+          <h3>Jobs 1–5</h3>
+          <ul data-rollup-list></ul>
+        </div>
+        <div class="job-fields">
+          <label class="field">Notes <textarea data-notes rows="3" placeholder="Tomorrow’s first task"></textarea></label>
+        </div>
+        <div class="job-actions no-print">
+          <button type="button" class="btn btn-start" data-action="start">Start</button>
+          <button type="button" class="btn btn-complete" data-action="complete" hidden>Complete</button>
+          <button type="button" class="btn btn-reopen" data-action="reopen" hidden>Reopen</button>
+        </div>
       </article>
     </section>
     <section class="metrics">
@@ -229,6 +608,19 @@
         <div class="metric"><strong>25–35</strong><span>targeted applications per week</span></div>
         <div class="metric"><strong>3</strong><span>applications before lunch</span></div>
         <div class="metric"><strong>1</strong><span>visible project improvement per day</span></div>
+        <div class="metric live-metric"><strong id="apps-today">0</strong><span>applications today (scan + sweep)</span></div>
+      </div>
+    </section>
+    <section class="reports" id="reports">
+      <div class="reports-head">
+        <h2>Reports</h2>
+        <button type="button" class="btn no-print" id="history-toggle" hidden>Show history</button>
+      </div>
+      <div id="today-reports" class="reports-list"></div>
+      <p class="empty-note" id="today-empty">No reports yet today. Complete a job to post a status report here.</p>
+      <div class="history-block" id="history-block" hidden>
+        <h2>History</h2>
+        <div id="history-reports"></div>
       </div>
     </section>
     <section class="focus">
@@ -241,8 +633,25 @@
     </section>
     <div class="footer">
       Treat the job search like a pipeline: applications → conversations → interviews → offers.
+      <div class="footer-actions no-print">
+        <button type="button" class="btn" id="export-json">Export JSON</button>
+        <button type="button" class="btn" id="import-json">Import JSON</button>
+        <input type="file" id="import-file" accept="application/json,.json" hidden>
+      </div>
+      <p class="footer-tip">Multi-tab tip: last write wins. Export a backup if you use more than one tab.</p>
     </div>
   </main>
+  <div class="toast" id="toast" hidden role="status" aria-live="polite"></div>
+  <div class="dialog-backdrop no-print" id="park-dialog" hidden>
+    <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="park-title">
+      <h2 id="park-title">A job is already running</h2>
+      <p id="park-message">Park the current job (keep its in-progress checks and notes) and start this one?</p>
+      <div class="dialog-actions">
+        <button type="button" class="btn" id="park-cancel">Cancel</button>
+        <button type="button" class="btn btn-start" id="park-confirm">Park and start</button>
+      </div>
+    </div>
+  </div>
   <script src="js/store.js"></script>
   <script src="js/jobs.js"></script>
   <script src="app.js"></script>
