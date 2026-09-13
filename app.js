@@ -452,4 +452,5 @@
   });
 
   render();
+  document.documentElement.setAttribute("data-app-ready", "1");
 })();
