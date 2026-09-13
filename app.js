@@ -213,6 +213,32 @@
       }
     }
     renderReports();
+    renderAppsToday();
+    renderCloseRollup();
+  }
+
+  function renderAppsToday() {
+    var el = document.getElementById("apps-today");
+    if (el) el.textContent = String(jobsApi.applicationsToday(state, today));
+  }
+
+  function renderCloseRollup() {
+    var list = document.querySelector("[data-rollup-list]");
+    if (!list) return;
+    var rollup = jobsApi.closeRollup(state, today);
+    list.textContent = "";
+    for (var i = 0; i < rollup.items.length; i += 1) {
+      var item = rollup.items[i];
+      var li = document.createElement("li");
+      var name = document.createElement("span");
+      name.textContent = item.title;
+      var mark = document.createElement("span");
+      mark.className = item.done ? "is-done" : "is-pending";
+      mark.textContent = item.done ? "Done" : "Not yet";
+      li.appendChild(name);
+      li.appendChild(mark);
+      list.appendChild(li);
+    }
   }
 
   function hideParkDialog() {
@@ -315,7 +341,7 @@
         skipCards: true
       });
     }
-    if (event.target.matches('[data-metric][type="text"]')) {
+    if (event.target.matches("[data-metric]")) {
       persist(
         jobsApi.setMetric(
           state,
@@ -395,6 +421,35 @@
       reader.readAsText(file);
     });
   }
+
+  document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape" && parkDialog && !parkDialog.hidden) {
+      hideParkDialog();
+    }
+  });
+
+  window.addEventListener("storage", function (event) {
+    if (event.key !== storeApi.STORAGE_KEY) return;
+    state = store.load();
+    state = jobsApi.ensureDay(state, today);
+    render();
+  });
+
+  function syncCalendarDay() {
+    var nextDate = jobsApi.localDateKey();
+    if (nextDate === today) return false;
+    today = nextDate;
+    state = jobsApi.ensureDay(state, today);
+    store.save(state);
+    return true;
+  }
+
+  document.addEventListener("visibilitychange", function () {
+    if (!document.hidden && syncCalendarDay()) render();
+  });
+  window.addEventListener("focus", function () {
+    if (syncCalendarDay()) render();
+  });
 
   render();
 })();
