@@ -303,9 +303,15 @@
     .rollup li{
       display:flex;
       justify-content:space-between;
-      gap:8px;
+      align-items:flex-start;
+      gap:10px;
       margin:6px 0;
       font-size:.92rem;
+    }
+    .rollup .is-done,
+    .rollup .is-pending{
+      flex:0 0 auto;
+      white-space:nowrap;
     }
     .rollup .is-done{
       color:var(--accent2);
