@@ -37,6 +37,18 @@ Job IDs:
 
 **Applications today** in Weekly Targets is `scan.applications + sweep.applications`.
 
+**This week** (Monday–Sunday of the local calendar week) sums the same metrics across the week:
+
+- Applications (`scan` + `sweep`)
+- Follow-ups and connections
+- Practice minutes
+- Days with all 6 jobs Done
+- Days the proof job is Done
+
+The applications card turns green at 25+ for the week, and amber while the week has activity but is still under 25.
+
+If yesterday’s **Close the Loop** notes are non-empty, they appear as a **Today’s focus** banner at the top of the page.
+
 A new local date starts with empty job cards. Completed reports from earlier dates stay under **History**.
 
 ## Storage

@@ -213,3 +213,162 @@ describe("metrics and rollup", () => {
     assert.equal(validate(state).ok, true);
   });
 });
+
+function completeAllJobs(state, date, stamp) {
+  let next = jobs.ensureDay(state, date);
+  jobs.JOB_IDS.forEach((id, index) => {
+    const t = stamp || "2026-09-16T1" + index + ":00:00.000Z";
+    next = jobs.startJob(next, date, id, t).state;
+    next = jobs.completeJob(next, date, id, t).state;
+  });
+  return next;
+}
+
+describe("weekDateKeys", () => {
+  test("returns Monday through Sunday for a Wednesday", () => {
+    assert.deepEqual(jobs.weekDateKeys("2026-09-16"), [
+      "2026-09-14",
+      "2026-09-15",
+      "2026-09-16",
+      "2026-09-17",
+      "2026-09-18",
+      "2026-09-19",
+      "2026-09-20"
+    ]);
+  });
+
+  test("Sunday still belongs to that week's Monday–Sunday span", () => {
+    assert.deepEqual(jobs.weekDateKeys("2026-09-13"), [
+      "2026-09-07",
+      "2026-09-08",
+      "2026-09-09",
+      "2026-09-10",
+      "2026-09-11",
+      "2026-09-12",
+      "2026-09-13"
+    ]);
+  });
+
+  test("spans a month boundary", () => {
+    assert.deepEqual(jobs.weekDateKeys("2026-10-01"), [
+      "2026-09-28",
+      "2026-09-29",
+      "2026-09-30",
+      "2026-10-01",
+      "2026-10-02",
+      "2026-10-03",
+      "2026-10-04"
+    ]);
+  });
+});
+
+describe("previousDateKey", () => {
+  test("returns the previous local calendar day", () => {
+    assert.equal(jobs.previousDateKey("2026-09-13"), "2026-09-12");
+  });
+
+  test("rolls back across a month boundary", () => {
+    assert.equal(jobs.previousDateKey("2026-09-01"), "2026-08-31");
+  });
+});
+
+describe("weeklyProgress", () => {
+  const WED = "2026-09-16";
+
+  test("empty state yields zeros and the current week bounds", () => {
+    const progress = jobs.weeklyProgress(fresh(), WED);
+    assert.equal(progress.weekStart, "2026-09-14");
+    assert.equal(progress.weekEnd, "2026-09-20");
+    assert.equal(progress.today, WED);
+    assert.equal(progress.applications, 0);
+    assert.equal(progress.followUps, 0);
+    assert.equal(progress.connections, 0);
+    assert.equal(progress.practiceMinutes, 0);
+    assert.equal(progress.proofDays, 0);
+    assert.equal(progress.completeDays, 0);
+    assert.equal(progress.weekdayCompleteDays, 0);
+    assert.equal(progress.daysWithData, 0);
+  });
+
+  test("sums scan and sweep applications on a single day", () => {
+    let state = jobs.ensureDay(fresh(), WED);
+    state = jobs.setMetric(state, WED, "scan", "applications", 3);
+    state = jobs.setMetric(state, WED, "sweep", "applications", 2);
+    assert.equal(jobs.weeklyProgress(state, WED).applications, 5);
+    assert.equal(jobs.weeklyProgress(state, WED).daysWithData, 1);
+  });
+
+  test("sums metrics across days in the same week", () => {
+    let state = jobs.ensureDay(fresh(), "2026-09-14");
+    state = jobs.setMetric(state, "2026-09-14", "scan", "applications", 4);
+    state = jobs.setMetric(state, "2026-09-14", "followup", "followUps", 2);
+    state = jobs.setMetric(state, "2026-09-14", "followup", "connections", 1);
+    state = jobs.setMetric(state, "2026-09-14", "practice", "minutes", 30);
+    state = jobs.ensureDay(state, WED);
+    state = jobs.setMetric(state, WED, "scan", "applications", 3);
+    state = jobs.setMetric(state, WED, "followup", "followUps", 1);
+    state = jobs.setMetric(state, WED, "followup", "connections", 2);
+    state = jobs.setMetric(state, WED, "practice", "minutes", 45);
+    const progress = jobs.weeklyProgress(state, WED);
+    assert.equal(progress.applications, 7);
+    assert.equal(progress.followUps, 3);
+    assert.equal(progress.connections, 3);
+    assert.equal(progress.practiceMinutes, 75);
+    assert.equal(progress.daysWithData, 2);
+  });
+
+  test("ignores metrics from outside the week", () => {
+    let state = jobs.ensureDay(fresh(), "2026-09-13");
+    state = jobs.setMetric(state, "2026-09-13", "scan", "applications", 9);
+    state = jobs.ensureDay(state, WED);
+    state = jobs.setMetric(state, WED, "scan", "applications", 2);
+    assert.equal(jobs.weeklyProgress(state, WED).applications, 2);
+  });
+
+  test("completeDays requires all six jobs done; idle leftover is zero", () => {
+    let state = completeAllJobs(fresh(), WED);
+    assert.equal(jobs.weeklyProgress(state, WED).completeDays, 1);
+    assert.equal(jobs.weeklyProgress(state, WED).weekdayCompleteDays, 1);
+    assert.equal(jobs.weeklyProgress(state, WED).proofDays, 1);
+
+    state = jobs.ensureDay(state, "2026-09-17");
+    ["scan", "followup", "proof", "practice", "sweep"].forEach((id, index) => {
+      const t = "2026-09-17T1" + index + ":00:00.000Z";
+      state = jobs.startJob(state, "2026-09-17", id, t).state;
+      state = jobs.completeJob(state, "2026-09-17", id, t).state;
+    });
+    const progress = jobs.weeklyProgress(state, WED);
+    assert.equal(progress.completeDays, 1);
+    assert.equal(progress.proofDays, 2);
+  });
+
+  test("weekend complete days count toward completeDays but not weekdayCompleteDays", () => {
+    const state = completeAllJobs(fresh(), "2026-09-19");
+    const progress = jobs.weeklyProgress(state, WED);
+    assert.equal(progress.completeDays, 1);
+    assert.equal(progress.weekdayCompleteDays, 0);
+  });
+});
+
+describe("tomorrowFocusFromYesterday", () => {
+  test("returns empty text when yesterday has no close notes", () => {
+    const focus = jobs.tomorrowFocusFromYesterday(fresh(), "2026-09-14");
+    assert.equal(focus.date, "2026-09-13");
+    assert.equal(focus.text, "");
+  });
+
+  test("trims yesterday close notes", () => {
+    let state = jobs.ensureDay(fresh(), DATE);
+    state = jobs.setNotes(state, DATE, "close", "  Ship resume  ");
+    const focus = jobs.tomorrowFocusFromYesterday(state, NEXT_DATE);
+    assert.equal(focus.date, DATE);
+    assert.equal(focus.text, "Ship resume");
+  });
+
+  test("whitespace-only notes become empty text", () => {
+    let state = jobs.ensureDay(fresh(), DATE);
+    state = jobs.setNotes(state, DATE, "close", "   \n\t  ");
+    const focus = jobs.tomorrowFocusFromYesterday(state, NEXT_DATE);
+    assert.equal(focus.text, "");
+  });
+});

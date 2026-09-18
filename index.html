@@ -116,6 +116,34 @@
       color:var(--muted);
       font-size:.9rem;
     }
+    .today-focus{
+      margin-bottom:24px;
+      border-left:4px solid var(--accent);
+      background:rgba(56,189,248,.08);
+      padding:18px 20px;
+      border-radius:12px;
+    }
+    .today-focus[hidden]{
+      display:none !important;
+    }
+    .today-focus-label{
+      margin:0 0 6px;
+      color:var(--accent);
+      font-size:.82rem;
+      font-weight:800;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+    }
+    .today-focus-text{
+      margin:0;
+      font-size:1.08rem;
+      font-weight:600;
+    }
+    .today-focus-meta{
+      margin:8px 0 0;
+      color:var(--muted);
+      font-size:.88rem;
+    }
     .focus{
       margin-top:24px;
       border-left:4px solid var(--accent2);
@@ -281,6 +309,34 @@
     .live-metric strong{
       color:var(--accent);
     }
+    .metrics-week{
+      margin-top:22px;
+      padding-top:18px;
+      border-top:1px solid var(--border);
+    }
+    .metrics-week h3{
+      margin:0;
+      font-size:1.05rem;
+    }
+    .metric-hint{
+      display:block;
+      margin-top:4px;
+      font-size:.78rem;
+      color:var(--muted);
+      font-weight:500;
+    }
+    .metric.on-track{
+      border-color:rgba(34,197,94,.45);
+    }
+    .metric.on-track strong{
+      color:#bbf7d0;
+    }
+    .metric.behind{
+      border-color:rgba(245,158,11,.45);
+    }
+    .metric.behind strong{
+      color:#fde68a;
+    }
     .rollup{
       margin-top:14px;
       padding:12px;
@@ -439,7 +495,7 @@
     }
     @media print{
       body{background:white;color:#111827}
-      .card,.metrics,header,.reports{box-shadow:none;background:white}
+      .card,.metrics,header,.reports,.today-focus{box-shadow:none;background:white}
       .subtitle,.footer,.metric span,.report-meta{color:#4b5563}
       .no-print,
       .job-actions,
@@ -460,6 +516,11 @@
       <p class="subtitle">A focused weekday system for getting hired as quickly as possible without turning the search into an all-day browser swamp.</p>
       <div class="goal">Core target: 3 strong applications before lunch</div>
     </header>
+    <section class="today-focus" id="today-focus" hidden>
+      <p class="today-focus-label">Today’s focus</p>
+      <p class="today-focus-text" id="today-focus-text"></p>
+      <p class="today-focus-meta" id="today-focus-meta"></p>
+    </section>
     <section class="grid" id="job-grid">
       <article class="card" data-job-id="scan">
         <div class="card-head">
@@ -615,6 +676,36 @@
         <div class="metric"><strong>3</strong><span>applications before lunch</span></div>
         <div class="metric"><strong>1</strong><span>visible project improvement per day</span></div>
         <div class="metric live-metric"><strong id="apps-today">0</strong><span>applications today (scan + sweep)</span></div>
+      </div>
+      <div class="metrics-week" id="metrics-week">
+        <h3>This week · <span id="week-range"></span></h3>
+        <div class="metrics-grid" id="week-stats-grid">
+          <div class="metric live-metric" id="week-apps-card">
+            <strong id="week-applications">0</strong>
+            <span>applications this week</span>
+            <span class="metric-hint">25–35 target</span>
+          </div>
+          <div class="metric live-metric">
+            <strong id="week-followups">0</strong>
+            <span>follow-ups</span>
+          </div>
+          <div class="metric live-metric">
+            <strong id="week-connections">0</strong>
+            <span>connections</span>
+          </div>
+          <div class="metric live-metric">
+            <strong id="week-practice">0</strong>
+            <span>practice minutes</span>
+          </div>
+          <div class="metric live-metric">
+            <strong id="week-complete-days">0 / 7</strong>
+            <span>full routine days</span>
+          </div>
+          <div class="metric live-metric">
+            <strong id="week-proof-days">0</strong>
+            <span>proof completed (days)</span>
+          </div>
+        </div>
       </div>
     </section>
     <section class="reports" id="reports">
