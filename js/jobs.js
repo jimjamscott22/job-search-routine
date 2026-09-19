@@ -113,12 +113,46 @@
     return JSON.parse(JSON.stringify(value));
   }
 
+  var DATE_KEY_RE = /^\d{4}-\d{2}-\d{2}$/;
+
   function localDateKey(date) {
     var d = date instanceof Date ? date : date ? new Date(date) : new Date();
     var y = d.getFullYear();
     var m = String(d.getMonth() + 1).padStart(2, "0");
     var day = String(d.getDate()).padStart(2, "0");
     return y + "-" + m + "-" + day;
+  }
+
+  function toLocalDate(value) {
+    if (value instanceof Date && !isNaN(value.getTime())) {
+      return new Date(value.getFullYear(), value.getMonth(), value.getDate());
+    }
+    if (typeof value === "string" && DATE_KEY_RE.test(value)) {
+      var parts = value.split("-");
+      return new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+    }
+    var parsed = value ? new Date(value) : new Date();
+    if (isNaN(parsed.getTime())) parsed = new Date();
+    return new Date(parsed.getFullYear(), parsed.getMonth(), parsed.getDate());
+  }
+
+  function previousDateKey(dateKey) {
+    var d = toLocalDate(dateKey);
+    d.setDate(d.getDate() - 1);
+    return localDateKey(d);
+  }
+
+  function weekDateKeys(referenceDate) {
+    var d = toLocalDate(referenceDate);
+    var daysFromMonday = (d.getDay() + 6) % 7;
+    var monday = new Date(d.getFullYear(), d.getMonth(), d.getDate() - daysFromMonday);
+    var keys = [];
+    for (var i = 0; i < 7; i += 1) {
+      keys.push(
+        localDateKey(new Date(monday.getFullYear(), monday.getMonth(), monday.getDate() + i))
+      );
+    }
+    return keys;
   }
 
   function toIso(now) {
@@ -378,6 +412,97 @@
     return scanApps + sweepApps;
   }
 
+  function jobHasProgress(job) {
+    if (!job) return false;
+    if (job.status && job.status !== "idle") return true;
+    if (job.metrics) {
+      var keys = Object.keys(job.metrics);
+      for (var i = 0; i < keys.length; i += 1) {
+        var value = job.metrics[keys[i]];
+        if (typeof value === "number" && value > 0) return true;
+        if (typeof value === "string" && value) return true;
+      }
+    }
+    return false;
+  }
+
+  function weeklyProgress(state, referenceDate) {
+    var today = typeof referenceDate === "string" && DATE_KEY_RE.test(referenceDate)
+      ? referenceDate
+      : localDateKey(toLocalDate(referenceDate));
+    var keys = weekDateKeys(today);
+    var applications = 0;
+    var followUps = 0;
+    var connections = 0;
+    var practiceMinutes = 0;
+    var proofDays = 0;
+    var completeDays = 0;
+    var weekdayCompleteDays = 0;
+    var daysWithData = 0;
+
+    for (var i = 0; i < keys.length; i += 1) {
+      var dateKey = keys[i];
+      var day = state && state.days && state.days[dateKey];
+      if (!day || !day.jobs) continue;
+
+      applications += applicationsToday(state, dateKey);
+
+      var followup = getJob(state, dateKey, "followup");
+      if (followup && followup.metrics) {
+        followUps += asNumber(followup.metrics.followUps);
+        connections += asNumber(followup.metrics.connections);
+      }
+
+      var practice = getJob(state, dateKey, "practice");
+      if (practice && practice.metrics) {
+        practiceMinutes += asNumber(practice.metrics.minutes);
+      }
+
+      var proof = getJob(state, dateKey, "proof");
+      if (proof && proof.status === "done") proofDays += 1;
+
+      var allDone = true;
+      var hasData = false;
+      for (var j = 0; j < JOB_IDS.length; j += 1) {
+        var job = getJob(state, dateKey, JOB_IDS[j]);
+        if (!job || job.status !== "done") allDone = false;
+        if (jobHasProgress(job)) hasData = true;
+      }
+      if (allDone) {
+        completeDays += 1;
+        if (i < 5) weekdayCompleteDays += 1;
+      }
+      if (hasData) daysWithData += 1;
+    }
+
+    return {
+      weekStart: keys[0],
+      weekEnd: keys[6],
+      today: today,
+      applications: applications,
+      followUps: followUps,
+      connections: connections,
+      practiceMinutes: practiceMinutes,
+      proofDays: proofDays,
+      completeDays: completeDays,
+      weekdayCompleteDays: weekdayCompleteDays,
+      daysWithData: daysWithData
+    };
+  }
+
+  function tomorrowFocusFromYesterday(state, todayKey) {
+    var today = typeof todayKey === "string" && DATE_KEY_RE.test(todayKey)
+      ? todayKey
+      : localDateKey(toLocalDate(todayKey));
+    var yesterday = previousDateKey(today);
+    var job = getJob(state, yesterday, "close");
+    var notes = job && typeof job.notes === "string" ? job.notes.trim() : "";
+    return {
+      date: yesterday,
+      text: notes
+    };
+  }
+
   function closeRollup(state, dateKey) {
     var items = [];
     var doneCount = 0;
@@ -405,6 +530,8 @@
     CLOSE_PREREQ_IDS: CLOSE_PREREQ_IDS,
     JOB_DEFS: JOB_DEFS,
     localDateKey: localDateKey,
+    previousDateKey: previousDateKey,
+    weekDateKeys: weekDateKeys,
     emptyJob: emptyJob,
     ensureDay: ensureDay,
     getJob: getJob,
@@ -417,6 +544,8 @@
     setNotes: setNotes,
     setMetric: setMetric,
     applicationsToday: applicationsToday,
+    weeklyProgress: weeklyProgress,
+    tomorrowFocusFromYesterday: tomorrowFocusFromYesterday,
     closeRollup: closeRollup
   };
 });

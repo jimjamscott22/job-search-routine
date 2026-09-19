@@ -213,8 +213,61 @@
       }
     }
     renderReports();
+    renderTomorrowFocus();
+    renderWeeklyProgress();
     renderAppsToday();
     renderCloseRollup();
+  }
+
+  function setText(id, value) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = value;
+  }
+
+  function formatShortDate(dateKey) {
+    if (!dateKey) return "";
+    var parts = String(dateKey).split("-");
+    var d = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+    if (isNaN(d.getTime())) return dateKey;
+    return d.toLocaleDateString([], { month: "short", day: "numeric" });
+  }
+
+  function formatWeekRange(weekStart, weekEnd) {
+    return formatShortDate(weekStart) + " – " + formatShortDate(weekEnd);
+  }
+
+  function renderTomorrowFocus() {
+    var section = document.getElementById("today-focus");
+    var textEl = document.getElementById("today-focus-text");
+    var metaEl = document.getElementById("today-focus-meta");
+    if (!section) return;
+    var focus = jobsApi.tomorrowFocusFromYesterday(state, today);
+    if (!focus.text) {
+      section.hidden = true;
+      if (textEl) textEl.textContent = "";
+      if (metaEl) metaEl.textContent = "";
+      return;
+    }
+    if (textEl) textEl.textContent = focus.text;
+    if (metaEl) metaEl.textContent = "From " + formatShortDate(focus.date) + " close-out";
+    section.hidden = false;
+  }
+
+  function renderWeeklyProgress() {
+    var progress = jobsApi.weeklyProgress(state, today);
+    setText("week-range", formatWeekRange(progress.weekStart, progress.weekEnd));
+    setText("week-applications", String(progress.applications));
+    setText("week-followups", String(progress.followUps));
+    setText("week-connections", String(progress.connections));
+    setText("week-practice", String(progress.practiceMinutes));
+    setText("week-complete-days", progress.completeDays + " / 7");
+    setText("week-proof-days", String(progress.proofDays));
+
+    var appsCard = document.getElementById("week-apps-card");
+    if (!appsCard) return;
+    appsCard.classList.remove("on-track", "behind");
+    if (progress.applications >= 25) appsCard.classList.add("on-track");
+    else if (progress.daysWithData > 0) appsCard.classList.add("behind");
   }
 
   function renderAppsToday() {
